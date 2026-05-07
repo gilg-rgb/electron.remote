@@ -1,25 +1,35 @@
 import flet as ft
-import os
-import shutil
 
-class MyUserControl(ft.UserControl):
+class UserControl(ft.UserControl):
+    def __init__(self):
+        super().__init__()
+        self.counter = 0
+
     def build(self):
-        return ft.Text("Hello, UserControl!")
+        self.text = ft.Text(str(self.counter), size=20)
+        return ft.Row([
+            ft.IconButton(ft.icons.REMOVE, on_click=self.minus_click),
+            self.text,
+            ft.IconButton(ft.icons.ADD, on_click=self.plus_click),
+        ])
+
+    def minus_click(self, e):
+        self.counter -= 1
+        self.text.value = str(self.counter)
+        self.update()
+
+    def plus_click(self, e):
+        self.counter += 1
+        self.text.value = str(self.counter)
+        self.update()
 
 def main(page: ft.Page):
-    # ????? ????? ??????? %temp% ??????? ??????
-    try:
-        temp_dir = os.environ.get("TEMP")
-        if temp_dir:
-            src_file = os.path.join("assets", "sample.png")
-            if os.path.exists(src_file):
-                shutil.copy(src_file, temp_dir)
-                print(f"Copied {src_file} to {temp_dir}")
-    except Exception as e:
-        print(f"Error copying file: {e}")
+    page.title = "Flet UserControl Example"
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
-    page.title = "Flet ft.UserControl Example"
-    page.add(MyUserControl())
+    # Add our custom UserControl to the page
+    page.add(UserControl())
 
 if __name__ == "__main__":
     ft.app(target=main)
